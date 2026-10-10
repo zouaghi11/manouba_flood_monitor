@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FloodWatch Manouba</title>
+<link rel="stylesheet" href="lib/leaflet/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <h1 data-i18n="home_h"></h1>
+  <p class="lead" data-i18n="home_p"></p>
+  <div id="banner" class="banner lvl-unknown" aria-live="polite"></div>
+  <div class="map" id="map"><div id="map-msg"></div></div>
+  <p class="small" data-i18n="click_hint"></p>
+  <section class="card">
+    <h2 data-i18n="what_h"></h2>
+    <p data-i18n="what_p1"></p>
+    <p data-i18n="what_p2"></p>
+    <p class="warn" data-i18n="what_p3"></p>
+    <div class="row"><a class="btn" href="citizen.html" data-i18n="go_citizen"></a><a class="btn alt" href="municipality.html" data-i18n="go_muni"></a></div>
+  </section>
+</main>
+<script src="lib/leaflet/leaflet.js"></script>
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/common.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>

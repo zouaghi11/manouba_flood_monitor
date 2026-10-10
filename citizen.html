@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FloodWatch Manouba - Citizens</title>
+<link rel="stylesheet" href="lib/leaflet/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <h1 data-i18n="cit_h"></h1>
+  <div id="banner" class="banner lvl-unknown" aria-live="polite"></div>
+  <div class="two">
+    <div>
+      <div class="map" id="map"><div id="map-msg"></div></div>
+      <div class="row" style="margin-top:8px"><button class="btn alt" id="locate" type="button" data-i18n="locate"></button><span class="small" data-i18n="click_hint"></span></div>
+      <div class="card" id="place" aria-live="polite" hidden></div>
+    </div>
+    <div>
+      <form class="card" id="report" aria-labelledby="rep-h">
+        <h2 id="rep-h" style="margin-top:0" data-i18n="cit_report_h"></h2>
+        <label for="r-type" data-i18n="rep_type"></label>
+        <select id="r-type"><option value="t1"></option><option value="t2"></option><option value="t3"></option><option value="t4"></option></select>
+        <label for="r-depth" data-i18n="rep_depth"></label>
+        <select id="r-depth"><option value="d0"></option><option value="d1"></option><option value="d2"></option><option value="d3"></option></select>
+        <label for="r-note" data-i18n="rep_note"></label>
+        <textarea id="r-note" rows="3" maxlength="300"></textarea>
+        <p class="small" id="r-loc" data-i18n="rep_loc"></p>
+        <button class="btn" type="submit" data-i18n="rep_send"></button>
+        <p class="small" id="r-msg" role="status"></p>
+      </form>
+      <div class="card"><p><strong data-i18n="emergency"></strong>: <span id="emg"></span></p><p class="small" data-i18n="disclaimer"></p></div>
+    </div>
+  </div>
+</main>
+<script src="lib/leaflet/leaflet.js"></script>
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/common.js"></script>
+<script src="js/citizen.js"></script>
+</body>
+</html>
