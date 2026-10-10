@@ -9,8 +9,12 @@
   }
   FWApp.onLang(function () { banner(); fillSelects(); });
   banner(); fillSelects();
-  FWApp.loadRain("live").then(function (s) { last = FWApp.evaluate(s, FWApp.nowIndex(s)); banner(); })
-    .catch(function () { last = { level: "unknown", reasons: [], time: null }; banner(); });
+  var lastOk = 0;
+  function pull() {
+    FWApp.loadRain("live").then(function (s) { lastOk = Date.now(); last = FWApp.evaluate(s, FWApp.nowIndex(s)); banner(); })
+      .catch(function () { if (!lastOk || Date.now() - lastOk > FW.maxDataAgeHours * 3600000) { last = { level: "unknown", reasons: [], time: null }; banner(); } });
+  }
+  pull(); FWApp.autoRefresh(pull, 10);
 
   var api = FWApp.buildMap("map", { reports: true, facilities: false });
   var marker = null;
