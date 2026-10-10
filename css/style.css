@@ -40,7 +40,7 @@ input,select,textarea{width:100%;font:inherit;padding:8px;border:1px solid var(-
 fieldset{border:1px solid var(--line);border-radius:10px}
 table{width:100%;border-collapse:collapse;font-size:.95rem}th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
-.chart svg{width:100%;height:auto}.chart text{font-size:10px;fill:var(--mut)}.chart .grid{stroke:var(--line);stroke-width:1}
+.chart{overflow-x:auto}.chart svg{width:100%;min-width:600px;height:auto}.chart text{font-size:10px;fill:var(--mut)}.chart .grid{stroke:var(--line);stroke-width:1}
 .chart .bar{fill:#2f7fc1}.chart .bar.fc{fill:#9ac3e8}.chart .now{stroke:var(--al);stroke-width:2;stroke-dasharray:4 3}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{border:0;background:var(--card);color:var(--fg);padding:7px 14px;font:inherit;cursor:pointer}
@@ -57,3 +57,8 @@ ul.clean{list-style:none;padding:0;margin:0}ul.clean li{padding:6px 0;border-bot
 .leaflet-control-layers-list{font-size:.85rem}
 .leaflet-popup-content{color:#1c2530}
 input[type=range]{padding:0;border:0;background:none}
+
+.chart .dv{stroke:var(--line);stroke-width:1}.chart .dt{font-weight:700}
+.chart .thr{stroke-width:1;stroke-dasharray:3 3}.chart .thr.w{stroke:var(--wa)}.chart .thr.a{stroke:var(--al)}
+.chart .th.w,.chart .th.a{font-size:9px;fill:var(--fg)}
+ul.clean.scroll{max-height:360px;overflow:auto}
