@@ -50,7 +50,8 @@ window.I18N = {
     val_note: "The risk map is a susceptibility ranking that needs validation on more flood events. Do not use it for safety decisions yet.",
     replay_time: "Replay time", replay_hint: "Move the slider through the storm to see the alert level the rules would give.",
     thr_note: "Thresholds (mm): watch / alert", error_rain: "Could not load rainfall data.", loading: "Loading...",
-    footer: "Academic prototype. Not an official warning system.", lang: "Language"
+    footer: "Academic prototype. Not an official warning system.", lang: "Language",
+    fac_hos: "Hospital", fac_sch: "School", fac_more: "Show more", fac_less: "Show less", now: "now", c_past: "Past", c_fc: "Forecast"
   },
   fr: {
     tl_h: "Ce que donnent les règles pour cet orage", tl_first_watch: "Première vigilance", tl_first_alert: "Première alerte", tl_none: "jamais atteinte",
@@ -102,6 +103,7 @@ window.I18N = {
     val_note: "La carte est un classement de susceptibilité qui doit être validé sur d'autres événements. Ne pas l'utiliser pour des décisions de sécurité.",
     replay_time: "Heure du rejeu", replay_hint: "Déplacez le curseur dans l'orage pour voir le niveau d'alerte que donneraient les règles.",
     thr_note: "Seuils (mm) : vigilance / alerte", error_rain: "Impossible de charger les données de pluie.", loading: "Chargement...",
-    footer: "Prototype académique. Pas un système d'alerte officiel.", lang: "Langue"
+    footer: "Prototype académique. Pas un système d'alerte officiel.", lang: "Langue",
+    fac_hos: "Hôpital", fac_sch: "École", fac_more: "Voir plus", fac_less: "Voir moins", now: "maintenant", c_past: "Passé", c_fc: "Prévision"
   }
 };
