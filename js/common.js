@@ -41,7 +41,7 @@
       '<div class="langs" role="group" aria-label="Language"><button class="langbtn" data-l="en" type="button">EN</button><button class="langbtn" data-l="fr" type="button">FR</button></div>';
     document.body.insertBefore(h, document.body.firstChild);
     h.querySelectorAll(".langbtn").forEach(function (b) { b.addEventListener("click", function () { setLang(b.getAttribute("data-l")); }); });
-    var f = el("footer", { "class": "foot" }, '<p data-i18n="footer"></p>');
+    var f = el("footer", { "class": "foot" }, '<p data-i18n="footer"></p><p class="small"><a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>) · Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors · Land cover © ESA WorldCover</p>');
     document.body.appendChild(f);
     applyLang(); markLang();
   };
