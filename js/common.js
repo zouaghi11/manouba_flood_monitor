@@ -106,18 +106,73 @@
   };
 
   /* ---------- hourly rain chart (inline SVG) ---------- */
-  FWApp.rainChart = function (node, s, idx, from, to) {
-    var v = s.values.slice(from, to + 1), n = v.length, W = 720, H = 200, pl = 34, pb = 22, pt = 8;
-    var max = Math.max(10, Math.ceil(Math.max.apply(null, v.map(function (x) { return x || 0; })) / 5) * 5);
-    var bw = (W - pl - 6) / n, g = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(t("rain_h")) + '">';
-    for (var y = 0; y <= 4; y++) { var yy = pt + (H - pt - pb) * y / 4; g += '<line x1="' + pl + '" x2="' + W + '" y1="' + yy + '" y2="' + yy + '" class="grid"/><text x="' + (pl - 4) + '" y="' + (yy + 3) + '" text-anchor="end">' + Math.round(max * (1 - y / 4)) + "</text>"; }
-    v.forEach(function (x, i) {
-      var h = x == null ? 0 : (H - pt - pb) * x / max, xx = pl + i * bw, isF = from + i > idx;
-      g += '<rect x="' + (xx + 0.5) + '" y="' + (H - pb - h) + '" width="' + Math.max(1, bw - 1) + '" height="' + h + '" class="' + (isF ? "bar fc" : "bar") + '"><title>' + esc(s.times[from + i].replace("T", " ")) + ": " + (x == null ? "-" : x) + " mm</title></rect>";
-      if (i % Math.ceil(n / 8) === 0) g += '<text x="' + (xx + bw / 2) + '" y="' + (H - 6) + '" text-anchor="middle">' + esc(s.times[from + i].slice(5, 13).replace("T", " ") + "h") + "</text>";
+  // Fixed window: 48 h before and including the selected hour, 24 h after. The window always has the same
+  // number of slots, so the bars keep their width and the date labels always follow the data.
+  FWApp.rainChart = function (node, s, idx) {
+    var PAST = 48, FUT = 24, N = PAST + FUT, start = idx - (PAST - 1);
+    var W = 720, H = 240, pl = 34, pr = 6, pt = 22, pb = 42, plotW = W - pl - pr, plotH = H - pt - pb, bw = plotW / N;
+    var loc = FWApp.lang() === "fr" ? "fr-FR" : "en-GB";
+    var wThr = C.thresholds.watch[1], aThr = C.thresholds.alert[1];
+    var slots = [], dmax = 0, j, i;
+    for (j = 0; j < N; j++) {
+      i = start + j;
+      var tm = i >= 0 && i < s.times.length ? s.times[i] : null, v = tm ? s.values[i] : null;
+      slots.push({ tm: tm, v: v });
+      if (v != null && v > dmax) dmax = v;
+    }
+    var max = Math.max(4, Math.ceil(Math.max(dmax, aThr * 1.15) / 4) * 4);
+    function X(k) { return pl + k * bw; }
+    function dateLabel(tm) {                                                    // "Sat 10 Oct" from "2026-10-10T00:00"
+      var d = new Date(Date.UTC(+tm.slice(0, 4), +tm.slice(5, 7) - 1, +tm.slice(8, 10)));
+      return d.toLocaleDateString(loc, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+    }
+    var g = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(t("rain_h")) + '">';
+    // legend
+    g += '<rect x="' + pl + '" y="3" width="10" height="10" class="bar"/><text x="' + (pl + 14) + '" y="12">' + esc(t("c_past")) + '</text>' +
+         '<rect x="' + (pl + 90) + '" y="3" width="10" height="10" class="bar fc"/><text x="' + (pl + 104) + '" y="12">' + esc(t("c_fc")) + '</text>';
+    // y grid
+    for (var y = 0; y <= 4; y++) {
+      var yy = pt + plotH * y / 4;
+      g += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + yy + '" y2="' + yy + '" class="grid"/><text x="' + (pl - 4) + '" y="' + (yy + 3) + '" text-anchor="end">' + Math.round(max * (1 - y / 4)) + "</text>";
+    }
+    // day dividers and x labels (every 6 h, date at midnight and at the left edge)
+    var firstDateDone = false, nextMidnight = -1;
+    for (j = 0; j < N; j++) if (slots[j].tm && slots[j].tm.slice(11, 13) === "00") { nextMidnight = j; break; }
+    if (slots[0].tm && (nextMidnight < 0 || nextMidnight > 8)) {
+      g += '<text x="' + pl + '" y="' + (H - 6) + '" class="dt">' + esc(dateLabel(slots[0].tm)) + "</text>"; firstDateDone = true;
+    }
+    slots.forEach(function (sl, k) {
+      if (!sl.tm) return;
+      var hh = +sl.tm.slice(11, 13);
+      if (hh === 0) {
+        g += '<line x1="' + X(k) + '" x2="' + X(k) + '" y1="' + pt + '" y2="' + (H - pb + 12) + '" class="dv"/>' +
+             '<text x="' + (X(k) > W - 100 ? X(k) - 3 : X(k) + 3) + '" y="' + (H - 6) + '" class="dt"' + (X(k) > W - 100 ? ' text-anchor="end"' : "") + ">" + esc(dateLabel(sl.tm)) + "</text>";
+      }
+      if (hh % 6 === 0) g += '<text x="' + X(k) + '" y="' + (H - pb + 12) + '" text-anchor="middle">' + (hh < 10 ? "0" : "") + hh + "h</text>";
     });
-    if (idx >= from && idx <= to) { var nx = pl + (idx - from + 1) * bw; g += '<line x1="' + nx + '" x2="' + nx + '" y1="' + pt + '" y2="' + (H - pb) + '" class="now"/>'; }
+    // bars
+    slots.forEach(function (sl, k) {
+      if (!sl.tm || sl.v == null) return;
+      var h = plotH * sl.v / max, isF = start + k > idx;
+      g += '<rect x="' + (X(k) + 0.5) + '" y="' + (pt + plotH - h) + '" width="' + Math.max(1, bw - 1) + '" height="' + h + '" class="' + (isF ? "bar fc" : "bar") + '"><title>' +
+           esc(sl.tm.replace("T", " ")) + ": " + sl.v + " mm</title></rect>";
+    });
+    // 1 h thresholds (Watch / Alert) as reference lines
+    [[wThr, "w", "lvl_watch"], [aThr, "a", "lvl_alert"]].forEach(function (r) {
+      if (r[0] > max) return;
+      var ty = pt + plotH * (1 - r[0] / max);
+      g += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + ty + '" y2="' + ty + '" class="thr ' + r[1] + '"/><text x="' + (W - pr - 2) + '" y="' + (ty - 3) + '" text-anchor="end" class="th ' + r[1] + '">' + esc(t(r[2])) + " 1 h: " + r[0] + " mm</text>";
+    });
+    // "now" marker at the end of the selected hour
+    var nx = X(PAST);
+    g += '<line x1="' + nx + '" x2="' + nx + '" y1="' + pt + '" y2="' + (pt + plotH) + '" class="now"/><text x="' + (nx + 3) + '" y="' + (pt + 9) + '">' + esc(t("now")) + "</text>";
     node.innerHTML = g + "</svg>";
+  };
+
+  /* ---------- keep live pages up to date ---------- */
+  FWApp.autoRefresh = function (fn, minutes) {
+    setInterval(fn, (minutes || 10) * 60000);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) fn(); });
   };
 
   /* ---------- reports (this browser only) ---------- */
