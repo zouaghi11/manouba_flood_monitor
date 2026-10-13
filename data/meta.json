@@ -37,44 +37,91 @@
    47
   ]
  },
- "areas_km2": {
-  "water": 1.6,
-  "low": 373.8,
-  "medium": 534.5,
-  "high": 222.4
- },
- "exposure": {
-  "buildings": {
-   "low": 3185.0,
-   "medium": 10365.0,
-   "high": 4632.0,
-   "water": 0.0,
-   "outside": 260.0,
-   "total": 18442.0
+ "default_map": "eb",
+ "maps": {
+  "eb": {
+   "areas_km2": {
+    "water": 1.6,
+    "low": 373.1,
+    "medium": 533.7,
+    "high": 223.9
+   },
+   "exposure": {
+    "buildings": {
+     "low": 1783.0,
+     "medium": 16162.0,
+     "high": 237.0,
+     "water": 0.0,
+     "outside": 260.0,
+     "total": 18442.0
+    },
+    "hospitals": {
+     "low": 0.0,
+     "medium": 4.0,
+     "high": 0.0,
+     "water": 0.0,
+     "outside": 0.0,
+     "total": 4.0
+    },
+    "schools": {
+     "low": 0.0,
+     "medium": 33.0,
+     "high": 1.0,
+     "water": 0.0,
+     "outside": 0.0,
+     "total": 34.0
+    },
+    "roads_km": {
+     "low": 375.4,
+     "medium": 1885.2,
+     "high": 237.9,
+     "water": 0.0,
+     "outside": 36.1,
+     "total": 2534.6
+    }
+   }
   },
-  "hospitals": {
-   "low": 0.0,
-   "medium": 3.0,
-   "high": 2.0,
-   "water": 0.0,
-   "outside": 0.0,
-   "total": 5.0
-  },
-  "schools": {
-   "low": 6.0,
-   "medium": 37.0,
-   "high": 39.0,
-   "water": 0.0,
-   "outside": 0.0,
-   "total": 82.0
-  },
-  "roads_km": {
-   "low": 438.1,
-   "medium": 1260.0,
-   "high": 800.3,
-   "water": 0.0,
-   "outside": 36.1,
-   "total": 2534.5
+  "ahp": {
+   "areas_km2": {
+    "water": 1.6,
+    "low": 373.8,
+    "medium": 534.5,
+    "high": 222.4
+   },
+   "exposure": {
+    "buildings": {
+     "low": 3185.0,
+     "medium": 10365.0,
+     "high": 4632.0,
+     "water": 0.0,
+     "outside": 260.0,
+     "total": 18442.0
+    },
+    "hospitals": {
+     "low": 0.0,
+     "medium": 2.0,
+     "high": 2.0,
+     "water": 0.0,
+     "outside": 0.0,
+     "total": 4.0
+    },
+    "schools": {
+     "low": 1.0,
+     "medium": 14.0,
+     "high": 19.0,
+     "water": 0.0,
+     "outside": 0.0,
+     "total": 34.0
+    },
+    "roads_km": {
+     "low": 438.1,
+     "medium": 1260.0,
+     "high": 800.3,
+     "water": 0.0,
+     "outside": 36.1,
+     "total": 2534.5
+    }
+   }
   }
  },
  "facilities": [
@@ -83,620 +130,403 @@
    "name": "",
    "lat": 36.756864,
    "lon": 10.019694,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "",
    "lat": 36.758559,
    "lon": 10.015526,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
-   "name": "echabbi school",
-   "lat": 36.759557,
-   "lon": 10.028749,
-   "cls": 2
+   "name": "المدرسة الاعدادية الشابي",
+   "lat": 36.759385,
+   "lon": 10.028987,
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "معهد حمودة باشا",
    "lat": 36.811076,
    "lon": 10.09168,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "المدرسة الاعدادية الشابي",
-   "lat": 36.759214,
-   "lon": 10.029225,
-   "cls": 2
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire Béjaoua",
    "lat": 36.836737,
    "lon": 10.01374,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire El Fejja",
    "lat": 36.682344,
    "lon": 9.953345,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "Lycée Ibn Mandhour",
    "lat": 36.711526,
    "lon": 9.876514,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "المدرسة الابتدائية الجديدة الحديثة",
    "lat": 36.848823,
    "lon": 9.93568,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "المدرسة الإعدادية حي الإذاعة بالجديدة",
    "lat": 36.848424,
    "lon": 9.933482,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "المدرسة الإعدادية الرياض بالجديدة",
    "lat": 36.842785,
    "lon": 9.933478,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire Dekhila",
    "lat": 36.86177,
    "lon": 9.708978,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire Chawat",
    "lat": 36.891598,
    "lon": 9.940911,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "",
    "lat": 36.810691,
    "lon": 10.067834,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "hospital",
    "name": "مستشفى الرازي",
    "lat": 36.809663,
    "lon": 10.083796,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "Collège Dekhila",
    "lat": 36.868895,
    "lon": 9.709977,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "",
    "lat": 36.803896,
    "lon": 10.117932,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "كلية الشباب",
    "lat": 36.837283,
    "lon": 10.088959,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "مدرسة الابتدائية أبو القاسم الشابي",
    "lat": 36.805424,
    "lon": 10.101796,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 3
+   }
   },
   {
    "type": "school",
    "name": "Lycée Ibn Abi Dhief",
    "lat": 36.808058,
    "lon": 10.104823,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
-   "name": "Ibn rachick",
-   "lat": 36.826484,
-   "lon": 10.094585,
-   "cls": 1
+   "name": "Collègee ibn rachik",
+   "lat": 36.826418,
+   "lon": 10.094637,
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
-   "name": "مدرسة ثانوية",
-   "lat": 36.798557,
-   "lon": 10.113961,
-   "cls": 3
+   "name": "معهد ابن رشد الدندان",
+   "lat": 36.798627,
+   "lon": 10.114017,
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "hospital",
    "name": "مستشفى الدندان",
    "lat": 36.801908,
    "lon": 10.110091,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "معهد ابن رشد الدندان",
-   "lat": 36.798696,
-   "lon": 10.114073,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "hospital",
    "name": "Dispensaire",
    "lat": 36.75485,
    "lon": 9.71863,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "Collège El Fejja",
    "lat": 36.691143,
    "lon": 9.947954,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire el ghazali",
    "lat": 36.824489,
    "lon": 10.094453,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "مدرسة أبو القاسم الشابي",
    "lat": 36.823109,
    "lon": 10.091151,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire chabeb",
-   "lat": 36.833363,
-   "lon": 10.087647,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "معهد الشياب",
-   "lat": 36.833733,
-   "lon": 10.08664,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire cheker 1",
-   "lat": 36.825685,
-   "lon": 10.092204,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "École Primaire cheker 1",
-   "lat": 36.825448,
-   "lon": 10.092276,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire cheker 1",
-   "lat": 36.825725,
-   "lon": 10.092262,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "École Primaire cheker 1",
-   "lat": 36.825632,
-   "lon": 10.092245,
-   "cls": 3
+   "lat": 36.833548,
+   "lon": 10.087143,
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire cheker 2",
-   "lat": 36.826169,
-   "lon": 10.092113,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "École Primaire cheker 2",
-   "lat": 36.82643,
-   "lon": 10.091974,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "École Primaire cheker 2",
-   "lat": 36.826399,
-   "lon": 10.09216,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire cheker 2",
-   "lat": 36.826275,
-   "lon": 10.091985,
-   "cls": 3
+   "lat": 36.82597,
+   "lon": 10.092152,
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "hospital",
    "name": "centre de santé de base",
-   "lat": 36.831317,
-   "lon": 10.091289,
-   "cls": 3
-  },
-  {
-   "type": "hospital",
-   "name": "centre de santé de base",
-   "lat": 36.831394,
-   "lon": 10.091411,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "Collègee 14 janvier",
-   "lat": 36.826562,
-   "lon": 10.101223,
-   "cls": 1
+   "lat": 36.831355,
+   "lon": 10.09135,
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "Collègee Douar hicher",
-   "lat": 36.826698,
-   "lon": 10.101269,
-   "cls": 1
-  },
-  {
-   "type": "school",
-   "name": "Collègee ibn rachik",
-   "lat": 36.825987,
-   "lon": 10.094743,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "Collègee ibn rachik",
-   "lat": 36.826503,
-   "lon": 10.094633,
-   "cls": 1
-  },
-  {
-   "type": "school",
-   "name": "Collègee ibn rachik",
-   "lat": 36.826537,
-   "lon": 10.094591,
-   "cls": 1
-  },
-  {
-   "type": "school",
-   "name": "Collègee ibn rachik",
-   "lat": 36.82658,
-   "lon": 10.094633,
-   "cls": 1
+   "lat": 36.82663,
+   "lon": 10.101246,
+   "cls": {
+    "ahp": 1,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire takadim 2",
-   "lat": 36.822096,
-   "lon": 10.082801,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "École Primaire takadim 2",
-   "lat": 36.822298,
-   "lon": 10.082611,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "École Primaire takadim 2",
-   "lat": 36.821971,
-   "lon": 10.082729,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "École Primaire takadim 2",
-   "lat": 36.822141,
-   "lon": 10.082689,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "École Primaire riyadh1",
-   "lat": 36.822261,
-   "lon": 10.082386,
-   "cls": 3
+   "lat": 36.822193,
+   "lon": 10.082622,
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École de takadom et l'inspection",
    "lat": 36.82324,
    "lon": 10.087187,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825766,
-   "lon": 10.084467,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825519,
-   "lon": 10.084089,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825682,
-   "lon": 10.084623,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825692,
-   "lon": 10.08437,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825743,
-   "lon": 10.084185,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825893,
-   "lon": 10.084387,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825875,
-   "lon": 10.084567,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825964,
-   "lon": 10.084686,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.826013,
-   "lon": 10.0844,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825379,
-   "lon": 10.084276,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825408,
-   "lon": 10.084513,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825148,
-   "lon": 10.084388,
-   "cls": 2
+   "lat": 36.825876,
+   "lon": 10.084359,
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "مدرسة خالد بن وليد الثانوية",
    "lat": 36.824568,
    "lon": 10.084068,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "مدرسة خالد بن وليد الثانوية",
-   "lat": 36.825359,
-   "lon": 10.084296,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École Primaire al marfa 1&2",
-   "lat": 36.826276,
-   "lon": 10.08407,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire al marfa 1&2",
-   "lat": 36.826527,
-   "lon": 10.084352,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire al marfa 1&2",
-   "lat": 36.826619,
-   "lon": 10.084402,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire al marfa 1&2",
-   "lat": 36.82631,
-   "lon": 10.084223,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire al marfa 1&2",
-   "lat": 36.826671,
-   "lon": 10.084136,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire al marfa 1&2",
-   "lat": 36.826747,
-   "lon": 10.084374,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire al marfa 1&2",
-   "lat": 36.826588,
-   "lon": 10.084177,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "École Primaire riyadh 2",
-   "lat": 36.822392,
-   "lon": 10.082517,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.824275,
-   "lon": 10.076234,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.824307,
-   "lon": 10.076296,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.824396,
-   "lon": 10.076276,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.824126,
-   "lon": 10.076213,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.824148,
-   "lon": 10.076121,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.824168,
-   "lon": 10.076019,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.824191,
-   "lon": 10.075939,
-   "cls": 3
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.82428,
-   "lon": 10.075906,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.82435,
-   "lon": 10.075936,
-   "cls": 2
-  },
-  {
-   "type": "school",
-   "name": "",
-   "lat": 36.82445,
-   "lon": 10.076072,
-   "cls": 3
+   "lat": 36.826709,
+   "lon": 10.084255,
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "École takadom 2",
-   "lat": 36.824259,
-   "lon": 10.076666,
-   "cls": 3
+   "lat": 36.824268,
+   "lon": 10.076152,
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "المدرسة الإبتدائية",
    "lat": 36.835846,
    "lon": 9.986166,
-   "cls": 3
+   "cls": {
+    "ahp": 3,
+    "eb": 2
+   }
   },
   {
    "type": "school",
    "name": "",
    "lat": 36.817021,
    "lon": 10.075862,
-   "cls": 2
+   "cls": {
+    "ahp": 2,
+    "eb": 2
+   }
   }
  ],
  "validation": {
-  "n_flood_land": 1620,
-  "hi_flood_pct": 29.6,
-  "hi_area_pct": 19.7,
-  "lift": 1.5,
-  "auc_hand": 0.724,
-  "auc_nohand": 0.643,
-  "stable_pct": 80.5
+  "n_flood_land": 4780,
+  "events": "Sept 2020 + Jan 2026 (3 radar passes)",
+  "eb": {
+   "auc": 0.861,
+   "gain20": 77,
+   "auc_cross": [
+    0.914,
+    0.875
+   ]
+  },
+  "ahp": {
+   "auc": 0.661,
+   "gain20": 34,
+   "lift": 1.25,
+   "stable_pct": 80.5
+  }
  },
  "flood_dilated_px": 1,
- "source_raster": "flood_risk_class_final.tif"
+ "source_rasters": {
+  "eb": "flood_risk_class_eb.tif",
+  "ahp": "flood_risk_class_final.tif"
+ }
 }
