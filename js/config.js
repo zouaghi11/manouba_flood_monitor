@@ -23,5 +23,5 @@ window.FW = {
 
   // Map
   center: [36.82, 10.0], zoom: 10,
-  files: { meta: "data/meta.json", risk: "data/risk_overlay.png", flood: "data/flood_s1_overlay.png", boundary: "data/boundary.geojson" }
+  files: { meta: "data/meta.json", risk_eb: "data/risk_eb.png", risk_ahp: "data/risk_ahp.png", flood: "data/flood_s1_overlay.png", boundary: "data/boundary.geojson" }
 };

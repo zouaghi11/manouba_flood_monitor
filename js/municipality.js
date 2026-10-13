@@ -30,7 +30,7 @@
   }
   function renderMeta() {
     if (!meta) return;
-    var e = meta.exposure || {}, a = meta.areas_km2 || {};
+    var key = mapApi ? mapApi.key : FWApp.mapKey(), md = FWApp.mapData(meta, key), e = md.exposure || {}, a = md.areas_km2 || {};
     var k = [];
     if (a.high != null) k.push([fmt(a.high, 1) + " " + t("unit_km2"), "kpi_high_area"]);
     if (e.buildings) k.push([fmt(e.buildings.high), "kpi_bld"]);
@@ -40,10 +40,19 @@
     var row = function (lab, o, d) { return "<tr><th scope='row'>" + t(lab) + "</th><td class='n'>" + fmt(o.total, d) + "</td><td class='n'>" + fmt(o.low, d) + "</td><td class='n'>" + fmt(o.medium, d) + "</td><td class='n'>" + fmt(o.high, d) + "</td></tr>"; };
     $("exp").innerHTML = "<table><thead><tr><th>" + t("col_el") + "</th><th class='n'>" + t("col_tot") + "</th><th class='n'>" + t("col_low") + "</th><th class='n'>" + t("col_med") + "</th><th class='n'>" + t("col_high") + "</th></tr></thead><tbody>" +
       (e.buildings ? row("el_bld", e.buildings) : "") + (e.hospitals ? row("el_hos", e.hospitals) : "") + (e.schools ? row("el_sch", e.schools) : "") + (e.roads_km ? row("el_road", e.roads_km) : "") + "</tbody></table>";
-    facs = (meta.facilities || []).filter(function (x) { return x.cls >= 2; }).sort(function (a, b) { return b.cls - a.cls || (a.type < b.type ? -1 : 1); });
+    facs = (meta.facilities || []).map(function (f) { return { type: f.type, name: f.name, lat: f.lat, lon: f.lon, cls: FWApp.facClass(f, key) }; })
+      .filter(function (x) { return x.cls >= 2; }).sort(function (a, b) { return b.cls - a.cls || (a.type < b.type ? -1 : 1); });
     renderFac();
-    var v = meta.validation;
-    $("val").innerHTML = v ? "<table><tbody><tr><th scope='row'>" + t("val_lift") + "</th><td class='n'>" + fmt(v.hi_flood_pct, 1) + "% (" + fmt(v.hi_area_pct, 1) + "%)</td></tr><tr><th scope='row'>" + t("val_auc") + "</th><td class='n'>" + fmt(v.auc_hand, 2) + " / " + fmt(v.auc_nohand, 2) + "</td></tr><tr><th scope='row'>" + t("val_stab") + "</th><td class='n'>" + fmt(v.stable_pct, 1) + "%</td></tr></tbody></table>" : "";
+    var v = meta.validation, dash = "&ndash;";
+    if (v && v.eb && v.ahp) {
+      var r2 = function (lab, x, y) { return "<tr><th scope='row'>" + t(lab) + "</th><td class='n'>" + x + "</td><td class='n'>" + y + "</td></tr>"; };
+      $("val").innerHTML = "<table><thead><tr><th></th><th class='n'>" + esc(t("map_eb")) + "</th><th class='n'>" + esc(t("map_ahp")) + "</th></tr></thead><tbody>" +
+        r2("val_n", fmt(v.n_flood_land), fmt(v.n_flood_land)) +
+        r2("val_auc2", fmt(v.eb.auc, 2), fmt(v.ahp.auc, 2)) +
+        r2("val_gain", fmt(v.eb.gain20, 0) + "%", fmt(v.ahp.gain20, 0) + "%") +
+        r2("val_cross", v.eb.auc_cross ? v.eb.auc_cross.map(function (z) { return fmt(z, 2); }).join(" / ") : dash, dash) +
+        r2("val_stab", dash, v.ahp.stable_pct != null ? fmt(v.ahp.stable_pct, 1) + "%" : dash) + "</tbody></table>";
+    } else $("val").innerHTML = "";
   }
   function renderLive() {
     if (!series) return;
@@ -93,6 +102,7 @@
   });
   FWApp.onLang(function () { if (series && res) { evalHere(); } renderMeta(); renderLog(); renderReports(); if (mode === "replay" && series) renderReplayTimeline(); });
 
+  FWApp.onMapChange(function () { renderMeta(); });
   var api = FWApp.buildMap("map", { facilities: true });
   api.ready.then(function (a) {
     mapApi = a; meta = a.meta; renderMeta();

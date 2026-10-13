@@ -62,3 +62,7 @@ input[type=range]{padding:0;border:0;background:none}
 .chart .thr{stroke-width:1;stroke-dasharray:3 3}.chart .thr.w{stroke:var(--wa)}.chart .thr.a{stroke:var(--al)}
 .chart .th.w,.chart .th.a{font-size:9px;fill:var(--fg)}
 ul.clean.scroll{max-height:360px;overflow:auto}
+
+.mapswitch{box-shadow:0 1px 5px #0005;background:var(--card)}
+.mapswitch button{font-size:.85rem;padding:6px 10px}
+.legend .small{display:block;margin:0 0 2px}

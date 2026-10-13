@@ -180,14 +180,25 @@
   FWApp.addReport = function (r) { var a = FWApp.getReports(); a.push(r); store("fw_reports", a.slice(-200)); };
 
   /* ---------- map ---------- */
+  // Two susceptibility maps share one grid: "eb" (evidence-based, default) and "ahp" (expert weights).
   var RISKNAME = { 0: "water", 1: "low", 2: "medium", 3: "high" };
   FWApp.RISKNAME = RISKNAME;
+  var MAPKEYS = ["eb", "ahp"];
+  FWApp.mapKey = function () { var k = store("fw_map"); return MAPKEYS.indexOf(k) >= 0 ? k : MAPKEYS[0]; };
+  FWApp.mapData = function (meta, key) {                                       // numbers of one map (old meta.json = AHP only)
+    if (meta.maps && meta.maps[key]) return meta.maps[key];
+    return { areas_km2: meta.areas_km2, exposure: meta.exposure };
+  };
+  FWApp.facClass = function (f, key) { return (f.cls !== null && typeof f.cls === "object") ? f.cls[key] : f.cls; };
+  var mapHooks = [];
+  FWApp.onMapChange = function (fn) { mapHooks.push(fn); };
+
   FWApp.buildMap = function (id, opts) {
     opts = opts || {};
     var map = L.map(id, { center: C.center, zoom: C.zoom, minZoom: 8, maxZoom: 17 });
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }).addTo(map);
-    var api = { map: map, layers: {}, meta: null, sampler: null, ready: null };
-    var overlays = {}, ctl = null;
+    var api = { map: map, layers: {}, meta: null, sampler: null, samplers: {}, key: FWApp.mapKey(), ready: null, switchEl: null, legendEl: null };
+    var overlays = {}, ctl = null, riskGroup = L.layerGroup(), riskImgs = {}, facGroup = null;
 
     function rebuildControl() {
       if (ctl) ctl.remove();
@@ -196,43 +207,68 @@
     }
     function add(key, layer, label, on) { api.layers[key] = layer; overlays[key] = { layer: layer, label: label }; if (on) layer.addTo(map); }
 
+    function drawSwitch() {
+      var d = api.switchEl; if (!d) return;
+      d.setAttribute("aria-label", t("map_switch"));
+      d.innerHTML = MAPKEYS.map(function (k) { return '<button type="button" data-k="' + k + '" aria-pressed="' + (api.key === k ? "true" : "false") + '">' + esc(t("map_" + k)) + "</button>"; }).join("");
+      d.querySelectorAll("button").forEach(function (b) { b.addEventListener("click", function () { api.setMap(b.getAttribute("data-k")); }); });
+    }
+    function drawLegend() {
+      var d = api.legendEl; if (!d || !api.meta) return;
+      d.innerHTML = "<strong>" + t("risk_title") + "</strong><br><span class='small'>" + esc(t("map_" + api.key)) + "</span>" +
+        ["high", "medium", "low", "water"].map(function (k) { var c = api.meta.palette[k]; return '<div><i style="background:rgb(' + c.join(",") + ')"></i>' + t("risk_" + k) + "</div>"; }).join("");
+    }
+    function drawFac() {
+      if (!facGroup || !api.meta) return;
+      facGroup.clearLayers();
+      var col = { 1: "#2e7d32", 2: "#ef6c00", 3: "#c62828" };
+      api.meta.facilities.forEach(function (f) {
+        var c = FWApp.facClass(f, api.key);
+        L.circleMarker([f.lat, f.lon], { radius: 6, color: "#000", weight: 1, fillColor: col[c] || "#888", fillOpacity: 0.95 })
+          .bindTooltip(esc((f.type === "hospital" ? "+ " : "") + (f.name || f.type)) + (c != null ? " (" + t("risk_" + RISKNAME[c]) + ")" : "")).addTo(facGroup);
+      });
+    }
+    api.setMap = function (key) {
+      if (MAPKEYS.indexOf(key) < 0 || !riskImgs[key]) return;
+      riskGroup.clearLayers(); riskGroup.addLayer(riskImgs[key]);
+      api.key = key; api.sampler = api.samplers[key] || null; store("fw_map", key);
+      drawSwitch(); drawLegend(); drawFac();
+      mapHooks.forEach(function (fn) { try { fn(key); } catch (e) { console.error(e); } });
+    };
+
     api.ready = fetchJSON(C.files.meta).then(function (meta) {
       api.meta = meta;
       var b = meta.bounds;                                   // [[south, west], [north, east]]
-      var risk = L.imageOverlay(C.files.risk, b, { opacity: 0.65, interactive: false });
-      risk.on("error", function () { var m = $("map-msg"); if (m) m.textContent = "data/risk_overlay.png not found"; });
-      add("risk", risk, "layer_risk", true);
+      MAPKEYS.forEach(function (k) {
+        var im = L.imageOverlay(C.files["risk_" + k], b, { opacity: 0.65, interactive: false });
+        im.on("error", function () { var m = $("map-msg"); if (m) m.textContent = C.files["risk_" + k] + " not found"; });
+        riskImgs[k] = im;
+      });
+      riskGroup.addLayer(riskImgs[api.key]);
+      add("risk", riskGroup, "layer_risk", true);
       if (opts.flood !== false) add("flood", L.imageOverlay(C.files.flood, b, { opacity: 0.9, interactive: false }), "layer_flood", false);
       fetchJSON(C.files.boundary).then(function (g) {
         add("bound", L.geoJSON(g, { style: { color: "#222", weight: 2, fill: false }, interactive: false }), "layer_bound", true); rebuildControl();
         try { if (!opts.noFit) map.fitBounds(api.layers.bound.getBounds(), { padding: [10, 10] }); } catch (e) {}
       }).catch(function () { try { map.fitBounds(b); } catch (e) {} });
-      if (opts.facilities && meta.facilities) {
-        var fg = L.layerGroup(); var col = { 1: "#2e7d32", 2: "#ef6c00", 3: "#c62828" };
-        meta.facilities.forEach(function (f) {
-          L.circleMarker([f.lat, f.lon], { radius: 6, color: "#000", weight: 1, fillColor: col[f.cls] || "#888", fillOpacity: 0.95 })
-            .bindTooltip(esc((f.type === "hospital" ? "+ " : "") + (f.name || f.type)) + " (" + t("risk_" + RISKNAME[f.cls]) + ")").addTo(fg);
-        });
-        add("fac", fg, "layer_fac", true);
-      }
+      if (opts.facilities && meta.facilities) { facGroup = L.layerGroup(); drawFac(); add("fac", facGroup, "layer_fac", true); }
       if (opts.reports) { var rg = L.layerGroup(); api.layers.reports = rg; add("reports", rg, "layer_reports", true); api.refreshReports = function () { rg.clearLayers(); FWApp.getReports().forEach(function (r) { L.marker([r.lat, r.lon], { title: r.type }).bindPopup(esc(r.type) + "<br>" + esc(r.depth) + "<br>" + esc(r.note || "") + "<br><small>" + esc(r.at) + "</small>").addTo(rg); }); }; api.refreshReports(); }
       rebuildControl();
-      addLegend(meta);
-      return loadSampler(meta).then(function (s) { api.sampler = s; return api; });
-    });
 
-    function addLegend(meta) {
       var lg = L.control({ position: "bottomright" });
-      lg.onAdd = function () {
-        var d = L.DomUtil.create("div", "legend"); d.setAttribute("role", "group");
-        var draw = function () { d.innerHTML = "<strong>" + t("risk_title") + "</strong>" + ["high", "medium", "low", "water"].map(function (k) { var c = meta.palette[k]; return '<div><i style="background:rgb(' + c.join(",") + ')"></i>' + t("risk_" + k) + "</div>"; }).join(""); };
-        draw(); FWApp.onLang(draw); return d;
-      };
+      lg.onAdd = function () { var d = L.DomUtil.create("div", "legend"); d.setAttribute("role", "group"); api.legendEl = d; drawLegend(); return d; };
       lg.addTo(map);
-    }
-    FWApp.onLang(rebuildControl);
+      var sw = L.control({ position: "bottomleft" });
+      sw.onAdd = function () { var d = L.DomUtil.create("div", "seg mapswitch"); d.setAttribute("role", "group"); L.DomEvent.disableClickPropagation(d); api.switchEl = d; drawSwitch(); return d; };
+      sw.addTo(map);
 
-    function loadSampler(meta) {                           // reads the colour of the overlay pixel under a point
+      return Promise.all(MAPKEYS.map(function (k) {
+        return loadSampler(meta, C.files["risk_" + k]).then(function (s) { api.samplers[k] = s; if (api.key === k) api.sampler = s; });
+      })).then(function () { return api; });
+    });
+    FWApp.onLang(function () { rebuildControl(); drawSwitch(); drawLegend(); drawFac(); });
+
+    function loadSampler(meta, file) {                     // reads the colour of the overlay pixel under a point
       return new Promise(function (resolve) {
         var img = new Image();
         img.onload = function () {
@@ -252,7 +288,7 @@
           } catch (e) { resolve(function () { return { cls: null, error: "canvas" }; }); }
         };
         img.onerror = function () { resolve(function () { return { cls: null, error: "missing" }; }); };
-        img.src = C.files.risk;
+        img.src = file;
       });
     }
     return api;
@@ -262,6 +298,6 @@
     if (r.error === "canvas") return t("canvas_fail");
     if (r.cls == null) return t("risk_outside");
     var k = RISKNAME[r.cls];
-    return "<strong>" + t("risk_" + k) + "</strong><br>" + t("risk_" + k + "_adv");
+    return "<strong>" + t("risk_" + k) + "</strong><br>" + t("risk_" + k + "_adv") + "<br><span class='small'>" + esc(t("map_" + FWApp.mapKey())) + "</span>";
   };
 })();
