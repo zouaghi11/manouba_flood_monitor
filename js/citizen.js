@@ -36,8 +36,10 @@
   $("report").addEventListener("submit", function (e) {
     e.preventDefault();
     if (!picked) { $("r-msg").textContent = t("rep_none"); return; }
-    FWApp.addReport({ type: t("rep_" + $("r-type").value), depth: t("rep_" + $("r-depth").value), note: $("r-note").value.trim(), lat: picked.lat, lon: picked.lng, at: new Date().toISOString() });
-    $("r-note").value = ""; $("r-msg").textContent = t("rep_saved");
-    if (mapApi && mapApi.refreshReports) mapApi.refreshReports();
+    var btn = e.target.querySelector("button[type=submit]"); btn.disabled = true; $("r-msg").textContent = "";
+    FWApp.addReport({ type: $("r-type").value, depth: $("r-depth").value, note: $("r-note").value.trim(), lat: +picked.lat.toFixed(5), lon: +picked.lng.toFixed(5) })
+      .then(function () { $("r-note").value = ""; $("r-msg").textContent = t(FWApp.reportsShared() ? "rep_saved_shared" : "rep_saved"); if (mapApi && mapApi.refreshReports) mapApi.refreshReports(); })
+      .catch(function (err) { $("r-msg").textContent = t(err && err.message === "wait" ? "rep_wait" : "rep_fail"); })
+      .then(function () { btn.disabled = false; });
   });
 })();

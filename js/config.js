@@ -21,6 +21,10 @@ window.FW = {
   // Emergency numbers shown on the citizen page: civil protection 198, ambulance (SAMU) 190, police 197
   emergencyNumber: "198 \u00b7 190 \u00b7 197",
 
+  // Citizen reports shared through Supabase (see supabase_setup.sql). Use the PUBLISHABLE / anon key only, never the service_role key.
+  // Leave both empty to keep reports in this browser only.
+  reports: { url: "", key: "" },
+
   // Map
   center: [36.82, 10.0], zoom: 10,
   files: { meta: "data/meta.json", risk_eb: "data/risk_eb.png", risk_ahp: "data/risk_ahp.png", flood: "data/flood_s1_overlay.png", boundary: "data/boundary.geojson" }

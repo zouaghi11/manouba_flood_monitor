@@ -14,9 +14,12 @@
     var log = FWApp.store("fw_log") || [];
     $("log").innerHTML = log.length ? log.slice().reverse().slice(0, 15).map(function (l) { return "<li>" + esc(l.at.replace("T", " ").slice(0, 16)) + " &rarr; <strong>" + FWApp.levelLabel(l.level) + "</strong></li>"; }).join("") : "<li>" + t("log_none") + "</li>";
   }
+  var repCache = [];
   function renderReports() {
-    var r = FWApp.getReports();
-    $("reps").innerHTML = r.length ? r.slice().reverse().slice(0, 10).map(function (x) { return "<li>" + esc(x.at.slice(0, 16).replace("T", " ")) + " - " + esc(x.type) + ", " + esc(x.depth) + (x.note ? " - " + esc(x.note) : "") + "</li>"; }).join("") : "<li>" + t("rep_empty") + "</li>";
+    FWApp.loadReports().then(function (r) {
+      repCache = r;
+      $("reps").innerHTML = r.length ? r.slice(0, 10).map(function (x) { return "<li>" + esc(FWApp.fmtTime(x.at)) + " - " + esc(FWApp.rep(x.type)) + ", " + esc(FWApp.rep(x.depth)) + (x.note ? " - " + esc(x.note) : "") + "</li>"; }).join("") : "<li>" + t("rep_empty") + "</li>";
+    }).catch(function () { $("reps").innerHTML = "<li>" + t("rep_fail_load") + "</li>"; });
   }
   var FAC_TOP = 5;
   function renderFac() {                                          // top 5 by default, "Show more / Show less" for the rest
@@ -96,17 +99,18 @@
   $("slider").addEventListener("input", function () { idx = Number(this.value); if (series) evalHere(); });
   $("log-clear").addEventListener("click", function () { FWApp.store("fw_log", []); renderLog(); });
   $("rep-csv").addEventListener("click", function () {
-    var rows = [["time", "type", "depth", "note", "lat", "lon"]].concat(FWApp.getReports().map(function (r) { return [r.at, r.type, r.depth, r.note, r.lat, r.lon]; }));
+    var en = function (c) { return (I18N.en["rep_" + c]) || c; };
+    var rows = [["time", "type", "depth", "note", "lat", "lon"]].concat(repCache.map(function (r) { return [r.at, en(r.type), en(r.depth), r.note, r.lat, r.lon]; }));
     var csv = rows.map(function (r) { return r.map(function (c) { return '"' + String(c == null ? "" : c).replace(/"/g, '""') + '"'; }).join(","); }).join("\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "reports.csv"; a.click();
   });
   FWApp.onLang(function () { if (series && res) { evalHere(); } renderMeta(); renderLog(); renderReports(); if (mode === "replay" && series) renderReplayTimeline(); });
 
   FWApp.onMapChange(function () { renderMeta(); });
-  var api = FWApp.buildMap("map", { facilities: true });
+  var api = FWApp.buildMap("map", { facilities: true, reports: true });
   api.ready.then(function (a) {
     mapApi = a; meta = a.meta; renderMeta();
     a.map.on("click", function (e) { var r = a.sampler ? a.sampler(e.latlng.lat, e.latlng.lng) : { cls: null }; L.popup().setLatLng(e.latlng).setContent(FWApp.riskText(r)).openOn(a.map); });
   }).catch(function () { $("map-msg").textContent = t("data_missing"); });
-  renderLog(); renderReports(); setMode("live");
+  renderLog(); renderReports(); setInterval(renderReports, 60000); setMode("live");
 })();

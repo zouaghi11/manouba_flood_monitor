@@ -175,9 +175,34 @@
     document.addEventListener("visibilitychange", function () { if (!document.hidden) fn(); });
   };
 
-  /* ---------- reports (this browser only) ---------- */
-  FWApp.getReports = function () { return store("fw_reports") || []; };
-  FWApp.addReport = function (r) { var a = FWApp.getReports(); a.push(r); store("fw_reports", a.slice(-200)); };
+  /* ---------- citizen reports ---------- */
+  // Shared mode: Supabase REST API (C.reports.url + C.reports.key). Without them: this browser only (localStorage).
+  // Reports store CODES (type t1..t4, depth d0..d3); the label is translated when shown.
+  var RP = C.reports || {};
+  FWApp.reportsShared = function () { return !!(RP.url && RP.key); };
+  FWApp.fmtTime = function (iso) {                         // ISO time (UTC) -> "2026-10-14 00:57" in Tunis time
+    try { return new Date(iso).toLocaleString("sv-SE", { timeZone: C.tz, hour12: false }).slice(0, 16); } catch (e) { return String(iso).slice(0, 16).replace("T", " "); }
+  };
+  FWApp.rep = function (code) { return /^[td]\d$/.test(code) ? t("rep_" + code) : String(code == null ? "" : code); };
+  function rpHeaders(extra) { var h = { apikey: RP.key, Authorization: "Bearer " + RP.key }; for (var k in (extra || {})) h[k] = extra[k]; return h; }
+  FWApp.loadReports = function () {
+    var p;
+    if (!FWApp.reportsShared()) p = Promise.resolve(store("fw_reports") || []);
+    else p = fetch(RP.url + "/rest/v1/reports_public?select=id,type,depth,lat,lon,created_at&order=created_at.desc&limit=300", { headers: rpHeaders(), cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error("reports " + r.status); return r.json(); })
+      .then(function (rows) { return rows.map(function (x) { return { type: x.type, depth: x.depth, note: "", lat: x.lat, lon: x.lon, at: x.created_at }; }); });
+    return p.then(function (list) { return list.slice().sort(function (a, b) { return a.at < b.at ? 1 : -1; }); });
+  };
+  FWApp.addReport = function (r) {                          // r: { type, depth, note, lat, lon }
+    if (Date.now() - (store("fw_last_report") || 0) < 60000) return Promise.reject(new Error("wait"));   // 1 report per minute per browser
+    if (!FWApp.reportsShared()) {
+      var a = store("fw_reports") || []; a.push({ type: r.type, depth: r.depth, note: r.note, lat: r.lat, lon: r.lon, at: new Date().toISOString() });
+      store("fw_reports", a.slice(-200)); store("fw_last_report", Date.now()); return Promise.resolve();
+    }
+    return fetch(RP.url + "/rest/v1/reports", { method: "POST", headers: rpHeaders({ "Content-Type": "application/json", Prefer: "return=minimal" }),
+      body: JSON.stringify({ type: r.type, depth: r.depth, note: r.note || "", lat: r.lat, lon: r.lon }) })
+      .then(function (res) { if (!res.ok) throw new Error("send " + res.status); store("fw_last_report", Date.now()); });
+  };
 
   /* ---------- map ---------- */
   // Two susceptibility maps share one grid: "eb" (evidence-based, default) and "ahp" (expert weights).
@@ -252,7 +277,19 @@
         try { if (!opts.noFit) map.fitBounds(api.layers.bound.getBounds(), { padding: [10, 10] }); } catch (e) {}
       }).catch(function () { try { map.fitBounds(b); } catch (e) {} });
       if (opts.facilities && meta.facilities) { facGroup = L.layerGroup(); drawFac(); add("fac", facGroup, "layer_fac", true); }
-      if (opts.reports) { var rg = L.layerGroup(); api.layers.reports = rg; add("reports", rg, "layer_reports", true); api.refreshReports = function () { rg.clearLayers(); FWApp.getReports().forEach(function (r) { L.marker([r.lat, r.lon], { title: r.type }).bindPopup(esc(r.type) + "<br>" + esc(r.depth) + "<br>" + esc(r.note || "") + "<br><small>" + esc(r.at) + "</small>").addTo(rg); }); }; api.refreshReports(); }
+      if (opts.reports) {
+        var rg = L.layerGroup(); api.layers.reports = rg; add("reports", rg, "layer_reports", true);
+        api.refreshReports = function () {
+          return FWApp.loadReports().then(function (list) {
+            rg.clearLayers();
+            list.forEach(function (r) {
+              L.marker([r.lat, r.lon], { title: FWApp.rep(r.type) }).bindPopup(esc(FWApp.rep(r.type)) + "<br>" + esc(FWApp.rep(r.depth)) + (r.note ? "<br>" + esc(r.note) : "") +
+                "<br><small>" + esc(FWApp.fmtTime(r.at)) + " &middot; " + esc(t("rep_unverified")) + "</small>").addTo(rg);
+            });
+          }).catch(function () {});
+        };
+        api.refreshReports(); setInterval(api.refreshReports, 60000); FWApp.onLang(api.refreshReports);
+      }
       rebuildControl();
 
       var lg = L.control({ position: "bottomright" });
