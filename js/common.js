@@ -184,7 +184,10 @@
     try { return new Date(iso).toLocaleString("sv-SE", { timeZone: C.tz, hour12: false }).slice(0, 16); } catch (e) { return String(iso).slice(0, 16).replace("T", " "); }
   };
   FWApp.rep = function (code) { return /^[td]\d$/.test(code) ? t("rep_" + code) : String(code == null ? "" : code); };
-  function rpHeaders(extra) { var h = { apikey: RP.key, Authorization: "Bearer " + RP.key }; for (var k in (extra || {})) h[k] = extra[k]; return h; }
+  function rpHeaders(extra) {                              // new "sb_publishable_..." keys are not JWTs: send them in apikey only
+    var h = { apikey: RP.key }; if (/^eyJ/.test(RP.key)) h.Authorization = "Bearer " + RP.key;     // legacy anon keys are JWTs
+    for (var k in (extra || {})) h[k] = extra[k]; return h;
+  }
   FWApp.loadReports = function () {
     var p;
     if (!FWApp.reportsShared()) p = Promise.resolve(store("fw_reports") || []);
@@ -201,7 +204,7 @@
     }
     return fetch(RP.url + "/rest/v1/reports", { method: "POST", headers: rpHeaders({ "Content-Type": "application/json", Prefer: "return=minimal" }),
       body: JSON.stringify({ type: r.type, depth: r.depth, note: r.note || "", lat: r.lat, lon: r.lon }) })
-      .then(function (res) { if (!res.ok) throw new Error("send " + res.status); store("fw_last_report", Date.now()); });
+      .then(function (res) { if (!res.ok) { res.text().then(function (x) { console.error("FloodWatch report not sent:", res.status, x); }); throw new Error("send " + res.status); } store("fw_last_report", Date.now()); });
   };
 
   /* ---------- map ---------- */
