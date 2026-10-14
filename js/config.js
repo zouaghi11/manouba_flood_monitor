@@ -23,7 +23,7 @@ window.FW = {
 
   // Citizen reports shared through Supabase (see supabase_setup.sql). Use the PUBLISHABLE / anon key only, never the service_role key.
   // Leave both empty to keep reports in this browser only.
-  reports: { url: "", key: "" },
+  reports: { url: "https://shpwakqrhwaupbpabohp.supabase.co", key: "sb_publishable_DE8knUVoOEJH72NzTeC1XQ_6soG00Ej" },
 
   // Map
   center: [36.82, 10.0], zoom: 10,
